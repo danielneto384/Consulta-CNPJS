@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de CNPJ</title>
+</head>
+<body>
+    <h1>Consulta de CNPJ</h1>
+    <label for="cnpj">Digite o CNPJ:</label>
+    <input type="text" id="cnpj" placeholder="00.000.000/0000-00">
+    <button onclick="consultarCNPJ()">Consultar</button>
+
+    <h2>Resultado</h2>
+    <div id="resultado"></div>
+
+    <script>
+        function consultarCNPJ() {
+            const cnpj = document.getElementById('cnpj').value.replace(/\D/g, ''); // Remove tudo que não for número
+            const url = `https://receitaws.com.br/v1/cnpj/${cnpj}`;
+
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('resultado').innerHTML = `
+                    <p><strong>Nome:</strong> ${data.nome}</p>
+                    <p><strong>Fantasia:</strong> ${data.fantasia}</p>
+                    <p><strong>Atividade Principal:</strong> ${data.atividade_principal[0].text}</p>
+                    <p><strong>UF:</strong> ${data.uf}</p>
+                    <p><strong>Telefone:</strong> ${data.telefone}</p>
+                    <p><strong>Email:</strong> ${data.email}</p>
+                    <p><strong>Data de Abertura:</strong> ${data.abertura}</p>
+                `;
+            })
+            .catch(error => {
+                document.getElementById('resultado').innerHTML = `<p>Erro ao buscar dados: ${error.message}</p>`;
+            });
+        }
+    </script>
+</body>
+</html>
